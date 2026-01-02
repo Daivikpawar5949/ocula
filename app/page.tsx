@@ -1,10 +1,23 @@
-"use client" 
+"use client"
 
 import { Hero } from "@/components/ui/animated-hero"
-import { SplineSceneBasic } from "@/components/ui/spline-demo"
+import dynamic from "next/dynamic"
+
+const SplineSceneBasic = dynamic(() => import("@/components/ui/spline-demo").then(mod => mod.SplineSceneBasic), {
+  ssr: false,
+  loading: () => <div className="w-full h-[500px] flex items-center justify-center bg-card text-main/50 font-bold">Loading 3D Scene...</div>
+})
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Play, Star, Zap, Camera, Mic, Sparkles, ArrowRight, Check, Flame } from "lucide-react"
+import { Play, Star, Sparkles, ArrowRight, Check } from "lucide-react"
+import { MagneticButton } from "@/components/ui/magnetic-button"
+import { Marquee } from "@/components/ui/marquee"
+import { HoverImageReveal } from "@/components/ui/hover-image-reveal"
+import { StaticNoise } from "@/components/ui/static-noise"
+import { TiltCard } from "@/components/ui/tilt-card"
+import { TextScramble } from "@/components/ui/text-scramble"
+import confetti from "canvas-confetti"
+import { FeaturesSection } from "@/components/sections/features-section"
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -17,13 +30,17 @@ export default function Home() {
     videoUrl: string
     sources: string[]
   } | null>(null)
-  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
-  const [expandedFeature, setExpandedFeature] = useState<number | null>(null)
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     const runId = Math.random().toString(36).substring(2, 12).toUpperCase()
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#FFD700', '#FF69B4', '#3385FF']
+    })
     const videoUrl = `https://cdn.ocula.ai/videos/${runId}.mp4`
     const sources = [
       `https://source1.com/article-about-${formData.topic.replace(/\s+/g, "-")}`,
@@ -38,45 +55,6 @@ export default function Home() {
     setFormData({ topic: "", videoStyle: "", duration: "30" })
     setOutput(null)
   }
-
-  const features = [
-    { 
-      icon: Sparkles, 
-      title: "AI Script Generation", 
-      desc: "Let AI write engaging scripts for your videos",
-      fullDesc: "Our AI generates compelling scripts tailored to your content style. Perfect for YouTube, TikTok, Instagram, and blog videos. Save hours of brainstorming and get fresh ideas instantly."
-    },
-    { 
-      icon: Camera, 
-      title: "Professional Quality", 
-      desc: "4K video output in seconds",
-      fullDesc: "Create stunning 4K videos that stand out on any platform. Auto-enhance colors, lighting, and composition. Your content will look like it was produced by professionals."
-    },
-    { 
-      icon: Zap, 
-      title: "Lightning Fast", 
-      desc: "Generate complete videos in minutes",
-      fullDesc: "Go from idea to published video in under 5 minutes. Our AI works instantly so you can scale your content production and publish more frequently."
-    },
-    { 
-      icon: Mic, 
-      title: "Voice Enhancement", 
-      desc: "Professional voiceover and audio editing",
-      fullDesc: "AI-powered voice enhancement removes background noise, improves clarity, and adds professional effects. Or use our library of natural-sounding AI voices in 50+ languages."
-    },
-    { 
-      icon: Star, 
-      title: "Smart Editing", 
-      desc: "Automatic cuts, transitions, and pacing",
-      fullDesc: "Our AI analyzes your content and applies perfect cuts, transitions, and pacing. No manual editing needed. Adjust settings with one click if you want to customize."
-    },
-    { 
-      icon: Flame, 
-      title: "Trending Effects", 
-      desc: "Stay current with latest effects & music",
-      fullDesc: "Access trending effects, filters, and royalty-free music updated daily. Keep your content fresh and relevant. Platform-specific optimization for YouTube, TikTok, Instagram, and more."
-    },
-  ]
 
   const testimonials = [
     {
@@ -96,7 +74,7 @@ export default function Home() {
     {
       name: "David Chen",
       role: "Podcast & YouTube Creator",
-      image: "�️",
+      image: "️",
       text: "Best investment for my content business. The AI voice enhancement makes my audio sound professional. No more expensive studio time needed.",
       rating: 5,
     },
@@ -110,6 +88,8 @@ export default function Home() {
       icon: "🎯",
       features: ["5 videos/month", "720p quality", "Basic templates", "Community support"],
       cta: "Get Started",
+      color: "bg-white",
+      buttonColor: "btn-neo-primary"
     },
     {
       name: "Professional",
@@ -119,6 +99,8 @@ export default function Home() {
       features: ["30 videos/month", "4K quality", "Premium templates", "Priority support", "Custom branding"],
       cta: "Start Free Trial",
       featured: true,
+      color: "bg-neo-yellow",
+      buttonColor: "btn-neo-secondary"
     },
     {
       name: "Enterprise",
@@ -127,153 +109,37 @@ export default function Home() {
       icon: "🏆",
       features: ["Unlimited videos", "8K quality", "Custom AI training", "Dedicated manager", "API access"],
       cta: "Contact Sales",
+      color: "bg-white",
+      buttonColor: "btn-neo-primary"
     },
   ]
 
   const useCases = [
-    { title: "YouTube Videos", desc: "From scripting to final edit, create complete YouTube videos in minutes", emoji: "▶️" },
-    { title: "TikTok & Reels", desc: "Generate viral-ready short-form content optimized for each platform", emoji: "�" },
-    { title: "Educational Content", desc: "Create tutorials, courses, and educational videos with professional quality", emoji: "�" },
-    { title: "Social Media Posts", desc: "Instagram, Facebook, LinkedIn - optimized content for every platform", emoji: "�" },
-    { title: "Product Demos", desc: "Showcase your products with engaging, professional demo videos", emoji: "�" },
-    { title: "Vlogs & Lifestyle", desc: "Daily vlogs, lifestyle content, and personal brand videos made easy", emoji: "🎬" },
-  ]
+    { title: "YouTube Videos", desc: "From scripting to final edit, create complete YouTube videos in minutes", emoji: "▶️", color: "bg-neo-blue" },
+    { title: "TikTok & Reels", desc: "Generate viral-ready short-form content optimized for each platform", emoji: "", color: "bg-neo-pink" },
+    { title: "Educational Content", desc: "Create tutorials, courses, and educational videos with professional quality", emoji: "", color: "bg-neo-green" },
+    { title: "Social Media Posts", desc: "Instagram, Facebook, LinkedIn - optimized content for every platform", emoji: "", color: "bg-neo-yellow" },
+    { title: "Product Demos", desc: "Showcase your products with engaging, professional demo videos", emoji: "", color: "bg-neo-orange" },
+    { title: "Vlogs & Lifestyle", desc: "Daily vlogs, lifestyle content, and personal brand videos made easy", emoji: "🎬", color: "bg-neo-purple" },
+  ];
 
   return (
-    <div className="w-full bg-background">
+    <div className="w-full bg-page min-h-screen font-sans text-main">
       {/* ========== ANIMATED HERO ========== */}
       <Hero />
 
-      {/* ========== WHY CONTENT CREATORS LOVE OCULA ========== */}
-      <section className="py-32 px-6 bg-gradient-to-b from-background to-dark-gray/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-5xl md:text-6xl font-bold text-foreground mb-6"
-            >
-              Why Creators Love <span className="text-primary">OCULA</span>
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-xl text-foreground/70 max-w-2xl mx-auto"
-            >
-              Designed for content creators who want to publish more, faster, without sacrificing quality
-            </motion.p>
-          </div>
+      <Marquee items={["CREATE", "EDIT", "PUBLISH", "VIRAL", "AI POWERED", "GROWTH"]} speed={15} />
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((Feature, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                onMouseEnter={() => setHoveredFeature(idx)}
-                onMouseLeave={() => setHoveredFeature(null)}
-                className={`p-8 rounded-lg border-2 border-primary/20 cursor-pointer transition-all duration-300 ${
-                  hoveredFeature === idx
-                    ? "border-primary bg-primary/10 transform scale-105"
-                    : "bg-dark-gray/50 hover:bg-dark-gray"
-                }`}
-              >
-                <div className="mb-4">
-                  <Feature.icon className={`w-12 h-12 transition-all duration-300 ${hoveredFeature === idx ? "text-primary scale-125" : "text-secondary"}`} />
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-3">{Feature.title}</h3>
-                <p className="text-foreground/70">{Feature.desc}</p>
-                {hoveredFeature === idx && (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    onClick={() => setExpandedFeature(idx)}
-                    className="mt-4 pt-4 border-t border-primary/30 flex items-center text-primary font-semibold hover:text-secondary transition-colors"
-                  >
-                    Learn More <ArrowRight className="w-4 h-4 ml-2" />
-                  </motion.button>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== FEATURE DETAIL MODAL ========== */}
-      {expandedFeature !== null && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setExpandedFeature(null)}
-          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-dark-gray border-2 border-primary rounded-lg p-10 max-w-2xl w-full"
-          >
-            <div className="flex items-start gap-6 mb-6">
-              <div className="flex-shrink-0">
-                {expandedFeature !== null && features[expandedFeature] && (() => {
-                  const FeatureIcon = features[expandedFeature].icon
-                  return <FeatureIcon className="w-16 h-16 text-primary" />
-                })()}
-              </div>
-              <div>
-                <h3 className="text-4xl font-bold text-foreground mb-2">
-                  {expandedFeature !== null && features[expandedFeature]?.title}
-                </h3>
-                <p className="text-xl text-foreground/70">
-                  {expandedFeature !== null && features[expandedFeature]?.desc}
-                </p>
-              </div>
-            </div>
-            
-            <p className="text-lg text-foreground/80 leading-relaxed mb-8 bg-dark-gray/50 p-6 rounded-lg border-l-4 border-secondary">
-              {expandedFeature !== null && features[expandedFeature]?.fullDesc}
-            </p>
-
-            <div className="flex gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => document.getElementById("form-section")?.scrollIntoView({ behavior: "smooth" }) || setExpandedFeature(null)}
-                className="flex-1 py-3 bg-primary text-black font-bold rounded-lg hover:shadow-lg transition-all"
-              >
-                Try It Now
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setExpandedFeature(null)}
-                className="flex-1 py-3 bg-medium-gray text-foreground font-bold rounded-lg hover:bg-primary/20 transition-all"
-              >
-                Close
-              </motion.button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
+      <FeaturesSection />
 
       {/* ========== USE CASES ========== */}
-      <section className="py-32 px-6 bg-dark-gray/20">
+      <section className="py-24 px-6 bg-neo-blue border-b-3 border-black">
         <div className="max-w-7xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-center mb-4 text-foreground"
-          >
-            Perfect For Every <span className="text-secondary">Content Type</span>
-          </motion.h2>
-          <p className="text-center text-foreground/70 text-xl mb-16 max-w-2xl mx-auto">
-            Whether you're creating YouTube videos, TikToks, or Instagram content, OCULA works for every platform and style
+          <TextScramble className="text-5xl md:text-6xl font-black text-center mb-4 text-white uppercase text-shadow-neo">
+            Perfect For Every Content Type
+          </TextScramble>
+          <p className="text-center text-white text-xl mb-16 max-w-2xl mx-auto font-bold border-2 border-main inline-block p-2 bg-inverse">
+            Whether you're creating YouTube videos, TikToks, or Instagram content
           </p>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -283,11 +149,11 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className="group p-8 bg-dark-gray border-2 border-medium-gray hover:border-primary rounded-lg cursor-pointer transition-all duration-300 hover:transform hover:scale-105"
+                className={`group p-8 border-3 border-main shadow-neo card-neo-hover ${useCase.color}`}
               >
-                <div className="text-5xl mb-4">{useCase.emoji}</div>
-                <h3 className="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">{useCase.title}</h3>
-                <p className="text-foreground/70">{useCase.desc}</p>
+                <div className="text-5xl mb-4 grayscale group-hover:grayscale-0 transition-all duration-300">{useCase.emoji}</div>
+                <h3 className="text-2xl font-black text-black mb-3 uppercase">{useCase.title}</h3>
+                <p className="text-black font-medium">{useCase.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -295,100 +161,76 @@ export default function Home() {
       </section>
 
       {/* ========== HOW IT WORKS ========== */}
-      <section className="py-32 px-6 bg-background">
+      <section className="py-24 px-6 bg-card border-b-3 border-main">
         <div className="max-w-7xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-center mb-20 text-foreground"
-          >
-            3 Steps to <span className="text-accent">Professional Content</span>
-          </motion.h2>
+          <TextScramble className="text-5xl md:text-6xl font-black text-center mb-20 text-main uppercase text-shadow-neo">
+            3 Steps to Professional Content
+          </TextScramble>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: 1, title: "Upload Your Scene", desc: "Record your monologue or scene using your phone", icon: Camera },
-              { step: 2, title: "AI Enhancement", desc: "Our AI enhances audio, lighting, and adds professional effects", icon: Zap },
-              { step: 3, title: "Download & Share", desc: "Get 4K video ready for auditions or social media", icon: ArrowRight },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                className="relative"
-              >
-                <div className="flex flex-col items-center text-center">
-                  <motion.div
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mb-6 cursor-pointer"
-                  >
-                    <item.icon className="w-10 h-10 text-black" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-foreground mb-3">{item.title}</h3>
-                  <p className="text-foreground/70">{item.desc}</p>
-                </div>
-                {idx < 2 && <div className="hidden md:block absolute top-10 -right-4 text-primary/30 text-4xl">→</div>}
-              </motion.div>
-            ))}
-          </div>
+          <HoverImageReveal
+            items={[
+              { title: "Connect Source", subtitle: "Paste any URL (YouTube, Blog, Notion)", image: "https://placehold.co/600x400/FFD700/000000/png?text=Step+1" },
+              { title: "AI Generation", subtitle: "Our engine writes the script & gathers visuals", image: "https://placehold.co/600x400/3385FF/000000/png?text=Step+2" },
+              { title: "Customize & Publish", subtitle: "Tweak the style and export in 4K", image: "https://placehold.co/600x400/FF69B4/000000/png?text=Step+3" },
+            ]}
+          />
         </div>
       </section>
 
       {/* ========== TESTIMONIALS ========== */}
-      <section className="py-32 px-6 bg-dark-gray/40">
+      <section className="py-24 px-6 bg-neo-yellow border-b-3 border-main">
         <div className="max-w-7xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-center mb-20 text-foreground"
-          >
-            Loved by <span className="text-primary">Creators Everywhere</span>
-          </motion.h2>
+          <TextScramble className="text-5xl md:text-6xl font-black text-center mb-20 text-black uppercase text-shadow-neo">
+            Loved by Creators
+          </TextScramble>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="flex flex-col items-center gap-12 relative">
             {testimonials.map((testimonial, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                className="bg-dark-gray border-2 border-primary/20 hover:border-primary p-8 rounded-lg transition-all duration-300"
-              >
-                <div className="flex items-center mb-6">
-                  <div className="text-4xl mr-4">{testimonial.image}</div>
-                  <div>
-                    <h4 className="text-lg font-bold text-foreground">{testimonial.name}</h4>
-                    <p className="text-sm text-foreground/60">{testimonial.role}</p>
-                  </div>
-                </div>
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-secondary text-secondary" />
-                  ))}
-                </div>
-                <p className="text-foreground/80 italic">"{testimonial.text}"</p>
-              </motion.div>
+              <div key={idx} className="sticky md:sticky top-32 w-full max-w-2xl md:-mt-24 first:mt-0" style={{ zIndex: idx }}>
+                <TiltCard>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-card border-3 border-main p-8 shadow-neo h-full min-h-[300px]"
+                  >
+                    <div className="flex items-center mb-6 border-b-3 border-main pb-4">
+                      <div className="text-4xl mr-4 bg-page border-3 border-main p-2 shadow-neo-sm">{testimonial.image}</div>
+                      <div>
+                        <h4 className="text-lg font-black text-main uppercase">{testimonial.name}</h4>
+                        <p className="text-sm text-main/70 font-bold">{testimonial.role}</p>
+                      </div>
+                    </div>
+                    <div className="flex mb-4 gap-1">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-6 h-6 fill-neo-yellow text-black" />
+                      ))}
+                    </div>
+                    <p className="text-main font-medium text-lg">"{testimonial.text}"</p>
+                  </motion.div>
+                </TiltCard>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ========== CREATE VIDEO FORM ========== */}
-      <section id="form-section" className="py-32 px-6 bg-background">
-        <div className="max-w-2xl mx-auto">
+      <section id="form-section" className="py-24 px-6 bg-page border-b-3 border-main relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-grid-pattern opacity-10 pointer-events-none" />
+
+        <div className="max-w-2xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-4">
-              Start Creating <span className="text-primary">Today</span>
+            <h2 className="text-5xl md:text-6xl font-black text-main mb-4 uppercase text-shadow-neo">
+              Start Creating <span className="text-neo-blue">Today</span>
             </h2>
-            <p className="text-xl text-foreground/70">Generate your first professional video in minutes</p>
+            <p className="text-xl text-main font-bold">Generate your first professional video in minutes</p>
           </motion.div>
 
           {!output ? (
@@ -397,36 +239,36 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               onSubmit={handleFormSubmit}
-              className="space-y-6"
+              className="space-y-8 bg-card p-8 border-3 border-main shadow-neo-lg"
             >
               <div>
-                <label className="block text-foreground font-semibold mb-3">Video Idea/Topic</label>
+                <label className="block text-main font-black uppercase mb-3 text-lg">Video Idea/Topic</label>
                 <motion.input
-                  whileFocus={{ scale: 1.02 }}
+                  whileFocus={{ scale: 1.01 }}
                   type="text"
                   value={formData.topic}
                   onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                  placeholder="e.g., Top 10 productivity tips, Workout routine, Product review"
+                  placeholder="e.g., Top 10 productivity tips..."
                   required
-                  className="w-full px-6 py-4 bg-medium-gray border-2 border-primary text-foreground placeholder-foreground/50 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-primary/20 rounded-lg transition-all"
+                  className="input-neo"
                 />
               </div>
 
               <div>
-                <label className="block text-foreground font-semibold mb-3">Content Style/Tone</label>
+                <label className="block text-main font-black uppercase mb-3 text-lg">Content Style</label>
                 <motion.textarea
-                  whileFocus={{ scale: 1.02 }}
+                  whileFocus={{ scale: 1.01 }}
                   value={formData.videoStyle}
                   onChange={(e) => setFormData({ ...formData, videoStyle: e.target.value })}
-                  placeholder="e.g., Casual & fun, Professional, Energetic, Educational, Storytelling"
+                  placeholder="e.g., Casual & fun, Professional..."
                   rows={3}
-                  className="w-full px-6 py-4 bg-medium-gray border-2 border-accent text-foreground placeholder-foreground/50 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-accent/20 rounded-lg transition-all"
+                  className="input-neo"
                 />
               </div>
 
               <div>
-                <label className="block text-foreground font-semibold mb-3">Video Duration</label>
-                <div className="grid grid-cols-3 gap-4">
+                <label className="block text-black font-black uppercase mb-3 text-lg">Duration</label>
+                <div className="flex gap-4">
                   {["15", "30", "60"].map((dur) => (
                     <motion.button
                       key={dur}
@@ -434,11 +276,10 @@ export default function Home() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setFormData({ ...formData, duration: dur })}
-                      className={`py-3 rounded-lg font-semibold transition-all ${
-                        formData.duration === dur
-                          ? "bg-primary text-black border-2 border-primary"
-                          : "bg-medium-gray text-foreground border-2 border-medium-gray hover:border-primary"
-                      }`}
+                      className={`flex-1 h-14 font-black transition-all border-3 border-black shadow-neo flex items-center justify-center text-lg ${formData.duration === dur
+                        ? "bg-neo-yellow translate-x-[2px] translate-y-[2px] shadow-neo-sm"
+                        : "bg-white hover:bg-off-white"
+                        }`}
                     >
                       {dur}s
                     </motion.button>
@@ -446,16 +287,16 @@ export default function Home() {
                 </div>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(255, 51, 51, 0.5)" }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                className="w-full py-5 bg-gradient-to-r from-primary to-secondary text-black font-bold text-lg rounded-lg transition-all cursor-pointer flex items-center justify-center gap-3"
-              >
-                <Sparkles className="w-5 h-5" />
-                Generate My Video
-                <Sparkles className="w-5 h-5" />
-              </motion.button>
+              <MagneticButton className="w-full">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  className="w-full h-20 bg-inverse text-main font-black text-2xl transition-all cursor-pointer flex items-center justify-center shadow-neo border-3 border-main hover:bg-inverse/90 uppercase tracking-widest gap-3"
+                >
+                  <Sparkles className="w-6 h-6 text-neo-yellow" /> Generate Video
+                </motion.button>
+              </MagneticButton>
             </motion.form>
           ) : (
             <motion.div
@@ -464,43 +305,47 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="space-y-6"
             >
-              <div className="bg-dark-gray border-2 border-primary rounded-lg p-8">
+              <div className="bg-neo-green border-3 border-main shadow-neo-lg p-8">
                 <div className="flex items-center gap-3 mb-4">
-                  <Check className="w-6 h-6 text-secondary" />
-                  <p className="text-foreground/70 font-semibold">Video Generated Successfully!</p>
+                  <div className="bg-inverse text-main p-2 border-2 border-main rounded-none">
+                    <Check className="w-6 h-6" />
+                  </div>
+                  <p className="text-black font-black text-xl uppercase">Video Generated Successfully!</p>
                 </div>
-                <p className="text-foreground/70 text-sm">Run ID</p>
-                <p className="text-primary font-mono text-2xl mb-4">{output.runId}</p>
+                <p className="text-black font-bold text-sm uppercase">Run ID</p>
+                <p className="text-black font-mono text-3xl mb-4 bg-white/50 p-2 border-2 border-black inline-block">{output.runId}</p>
               </div>
 
-              <div className="bg-dark-gray border-2 border-secondary rounded-lg p-8">
-                <p className="text-foreground/70 text-sm mb-2">Download Link</p>
+              <div className="bg-card border-3 border-main shadow-neo p-8">
+                <p className="text-main font-bold text-sm uppercase mb-2">Download Link</p>
                 <a
                   href={output.videoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-secondary hover:text-primary transition-colors break-all text-lg font-semibold flex items-center gap-2"
+                  className="text-neo-blue hover:text-main hover:underline decoration-4 text-xl font-black flex items-center gap-2 break-all"
                 >
-                  <Play className="w-5 h-5" />
+                  <Play className="w-5 h-5 fill-current" />
                   {output.videoUrl}
                 </a>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={resetForm}
-                className="w-full py-4 bg-secondary text-black font-bold rounded-lg hover:shadow-lg transition-all"
-              >
-                Create Another Video
-              </motion.button>
+              <MagneticButton className="w-full">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={resetForm}
+                  className="btn-neo-secondary w-full"
+                >
+                  <Sparkles className="w-5 h-5" /> Create Another Video
+                </motion.button>
+              </MagneticButton>
             </motion.div>
           )}
         </div>
       </section>
 
       {/* ========== PRICING ========== */}
-      <section className="py-32 px-6 bg-dark-gray/30">
+      <section className="py-24 px-6 bg-card border-b-3 border-main">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -508,53 +353,50 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-20"
           >
-            <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-4">
-              Simple, Transparent <span className="text-accent">Pricing</span>
+            <h2 className="text-5xl md:text-6xl font-black text-main mb-4 uppercase text-shadow-neo">
+              Simple <span className="bg-neo-green px-2 border-3 border-main shadow-neo transform -rotate-1 inline-block text-black">Pricing</span>
             </h2>
-            <p className="text-xl text-foreground/70">Choose the plan that fits your acting career</p>
+            <p className="text-xl text-main font-bold">Choose the plan that fits your acting career</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 items-start">
             {pricingPlans.map((plan, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: idx * 0.15 }}
-                className={`rounded-lg overflow-hidden transition-all duration-300 ${
-                  plan.featured ? "border-4 border-primary md:scale-105" : "border-2 border-primary/30"
-                } bg-dark-gray`}
+                className={`transition-all duration-300 border-3 border-black shadow-neo overflow-visible ${plan.color} ${plan.featured ? 'transform md:-translate-y-4 z-10' : ''}`}
               >
                 {plan.featured && (
-                  <div className="bg-gradient-to-r from-primary to-secondary text-black py-3 text-center font-bold text-sm">
-                    MOST POPULAR
+                  <div className="bg-black text-white py-3 text-center font-black text-sm uppercase tracking-widest border-b-3 border-black">
+                    Most Popular
                   </div>
                 )}
                 <div className="p-8">
-                  <div className="text-5xl mb-4">{plan.icon}</div>
-                  <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
+                  <div className="text-5xl mb-6">{plan.icon}</div>
+                  <h3 className="text-3xl font-black text-black mb-2 uppercase">{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-5xl font-bold text-primary">{plan.price}</span>
-                    <span className="text-foreground/70">{plan.period}</span>
+                    <span className="text-5xl font-black text-black">{plan.price}</span>
+                    <span className="text-gray-600 font-bold">{plan.period}</span>
                   </div>
 
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-4 mb-8">
                     {plan.features.map((feature, fIdx) => (
-                      <li key={fIdx} className="flex items-center gap-3 text-foreground/80">
-                        <Check className="w-5 h-5 text-secondary flex-shrink-0" />
+                      <li key={fIdx} className="flex items-center gap-3 text-black font-medium">
+                        <Check className="w-6 h-6 text-black border-2 border-black p-0.5 bg-neo-green flex-shrink-0" />
                         {feature}
                       </li>
                     ))}
                   </ul>
 
                   <motion.button
-                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`w-full py-4 rounded-lg font-bold transition-all ${
-                      plan.featured
-                        ? "bg-gradient-to-r from-primary to-secondary text-black hover:shadow-lg hover:shadow-primary/50"
-                        : "bg-medium-gray text-foreground hover:bg-primary hover:text-black"
-                    }`}
+                    className={`w-full h-16 font-black transition-all border-3 border-black shadow-neo flex items-center justify-center text-lg uppercase tracking-wider ${plan.featured
+                      ? "bg-black text-white hover:bg-gray-900"
+                      : "bg-neo-blue text-white hover:bg-blue-600"
+                      }`}
                   >
                     {plan.cta}
                   </motion.button>
@@ -566,63 +408,61 @@ export default function Home() {
       </section>
 
       {/* ========== CTA SECTION ========== */}
-      <section className="py-32 px-6 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-32 h-32 bg-accent rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      <section className="py-24 px-6 bg-neo-pink border-b-3 border-main flex items-center justify-center">
+        <div className="max-w-4xl mx-auto text-center relative z-10 bg-card border-3 border-main shadow-neo-xl p-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-bold text-foreground mb-6"
+            className="text-5xl md:text-6xl font-black text-black mb-6 uppercase leading-tight"
           >
-            Ready to <span className="text-primary">Scale Your Content?</span>
+            Ready to <span className="text-neo-blue underline decoration-4 decoration-black">Scale?</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xl text-foreground/70 mb-12"
+            className="text-xl text-black mb-12 font-bold"
           >
-            Join thousands of creators producing more content, faster. Publish 5x more videos without the editing headache.
+            Join thousands of creators producing more content, faster.
           </motion.p>
 
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(255, 51, 51, 0.5)" }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => document.getElementById("form-section")?.scrollIntoView({ behavior: "smooth" })}
-            className="px-10 py-6 bg-primary text-black font-bold text-lg rounded-lg transition-all cursor-pointer flex items-center gap-3 mx-auto"
-          >
-            Start Free Today
-            <ArrowRight className="w-5 h-5" />
-          </motion.button>
+          <MagneticButton>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => document.getElementById("form-section")?.scrollIntoView({ behavior: "smooth" })}
+              className="btn-neo-primary text-2xl h-20 w-auto px-12 mx-auto"
+            >
+              Start Free <ArrowRight className="w-8 h-8 ml-2" />
+            </motion.button>
+          </MagneticButton>
         </div>
       </section>
 
       {/* ========== INTERACTIVE 3D SPLINE SECTION ========== */}
-      <section className="py-32 px-6 bg-background">
+      <section className="py-24 px-6 bg-card border-b-3 border-main">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-24">
+            <Marquee direction="right" items={["CINEMATIC", "PROFESSIONAL", "4K QUALITY", "INSTANT", "MAGIC", "EDITING"]} speed={15} separator="✦" className="border-x-3 border-main -mx-6 mb-8 rotate-1" />
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-20"
           >
-            <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-4">
-              Explore <span className="text-primary">Interactive 3D</span>
+            <h2 className="text-5xl md:text-6xl font-black text-main mb-4 uppercase text-shadow-neo">
+              Explore <span className="bg-neo-purple px-2 text-white border-3 border-main shadow-neo transform rotate-2 inline-block">3D World</span>
             </h2>
-            <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
-              Experience immersive 3D visualization of your content creation journey
-            </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="border-3 border-main shadow-neo-xl"
           >
             <SplineSceneBasic />
           </motion.div>
@@ -630,43 +470,45 @@ export default function Home() {
       </section>
 
       {/* ========== FOOTER ========== */}
-      <footer className="py-16 px-6 border-t border-medium-gray bg-dark-gray/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <h3 className="text-2xl font-bold text-primary mb-4">OCULA</h3>
-              <p className="text-foreground/70">Professional video creation for content creators.</p>
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground mb-4">Product</h4>
-              <ul className="space-y-2 text-foreground/70">
-                <li className="hover:text-primary cursor-pointer">Features</li>
-                <li className="hover:text-primary cursor-pointer">Pricing</li>
-                <li className="hover:text-primary cursor-pointer">For Creators</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground mb-4">Company</h4>
-              <ul className="space-y-2 text-foreground/70">
-                <li className="hover:text-primary cursor-pointer">About</li>
-                <li className="hover:text-primary cursor-pointer">Blog</li>
-                <li className="hover:text-primary cursor-pointer">Contact</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground mb-4">Legal</h4>
-              <ul className="space-y-2 text-foreground/70">
-                <li className="hover:text-primary cursor-pointer">Privacy</li>
-                <li className="hover:text-primary cursor-pointer">Terms</li>
-                <li className="hover:text-primary cursor-pointer">Support</li>
-              </ul>
-            </div>
+      <footer className="bg-black text-white py-16 px-6 border-t-4 border-main relative overflow-hidden">
+        <StaticNoise opacity={0.07} />
+        <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12 relative z-10">
+          <div>
+            <h3 className="text-3xl font-black text-neo-yellow mb-4 uppercase">OCULA</h3>
+            <p className="text-gray-400 font-bold">Professional video creation for content creators.</p>
           </div>
+          <div>
+            <h4 className="font-black text-white mb-4 uppercase text-lg">Product</h4>
+            <ul className="space-y-2 text-gray-400 font-bold">
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Features</li>
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Pricing</li>
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">For Creators</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-black text-white mb-4 uppercase text-lg">Company</h4>
+            <ul className="space-y-2 text-gray-400 font-bold">
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">About</li>
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Blog</li>
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Contact</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-black text-white mb-4 uppercase text-lg">Legal</h4>
+            <ul className="space-y-2 text-gray-400 font-bold">
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Privacy</li>
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Terms</li>
+              <li className="hover:text-neo-yellow cursor-pointer transition-colors">Support</li>
+            </ul>
+          </div>
+        </div>
 
-          <div className="border-t border-medium-gray pt-8">
-            <p className="text-center text-foreground/60">
-              &copy; 2024 OCULA. Empowering creators everywhere. Made with ❤️ for content creators.
-            </p>
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative">
+          <p className="text-gray-500 font-bold">
+            &copy; 2024 OCULA. Empowering creators everywhere.
+          </p>
+          <div className="bg-neo-blue text-black font-black px-4 py-1 skew-x-[-10deg]">
+            Made with ❤️
           </div>
         </div>
       </footer>

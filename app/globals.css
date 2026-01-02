@@ -3,33 +3,130 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg-page: #030303;
+    --bg-card: #111111;
+    --text-main: #FFFFFF;
+    --text-inverse: #000000;
+    --border-main: #FFFFFF;
+    --shadow-color: #FFFFFF;
+    --muted: #2A2A2A;
+
+    /* Brand Colors (Cyber-Brutalist Refresh) */
+    --neo-yellow: #EBFF00;
+    --neo-pink: #FF00FF;
+    --neo-blue: #00FFFF;
+    --neo-green: #00FF94;
+    --neo-purple: #BC13FE;
+    --neo-orange: #FF5500;
+    --off-white: #FDFBF7;
+
+    --noise-steps: steps(10);
+  }
+
+  ::selection {
+    background-color: var(--neo-blue);
+    color: black;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-page);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--neo-purple);
+    border: 2px solid var(--bg-page);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--neo-pink);
+  }
+
   * {
     @apply m-0 p-0 box-border;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply text-main font-sans bg-page;
   }
 
   html {
     scroll-behavior: smooth;
   }
+
+  /* Optimized lighter noise effect */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA5OTkAAAAAAAAAAABMTExERERmZmZnATESAAAACHRSTlMAMwA5EDduWCPQA11OAAAAlklEQVQ4y6XTwQ3CMAwF0KySQTnVEcoA6IDMEDoAYwB0wEqbOIEDMIEjOAf+i0OaC/0lTypFduw4L2nN7QvR0tYk66d+695H11L7s5xL7c9yL7U/y7vU/iz3UvuzvEvtz3IvtT/Lu9T+LPdS+7O8S+3Pci+1P8u71P4s91L7s7xL7c9yL7U/y7vU/iz3UvuzvEvtz3IvtT/Lu/4/Pd49yJ3pY20AAAAASUVORK5CYII=");
+    background-repeat: repeat;
+    opacity: 0.03;
+  }
 }
 
+
 @layer components {
-  .btn-primary {
-    @apply px-6 py-3 bg-primary text-white font-bold rounded-none transition-all duration-200 hover:scale-105 active:scale-95;
+
+  /* Buttons */
+  .btn-neo-primary {
+    @apply px-8 py-4 bg-neo-yellow text-black font-black text-xl uppercase tracking-wider border-3 border-main shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-150 flex items-center justify-center gap-2;
   }
 
-  .btn-secondary {
-    @apply px-6 py-3 bg-secondary text-black font-bold rounded-none transition-all duration-200 hover:scale-105 active:scale-95;
+  .btn-neo-secondary {
+    @apply px-8 py-4 bg-neo-pink text-black font-black text-xl uppercase tracking-wider border-3 border-main shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-150 flex items-center justify-center gap-2;
   }
 
-  .card {
-    @apply bg-dark-gray border-2 border-medium-gray rounded-none p-6;
+  .btn-neo-accent {
+    @apply px-8 py-4 bg-neo-blue text-white font-black text-xl uppercase tracking-wider border-3 border-main shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-sm active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-150 flex items-center justify-center gap-2;
   }
 
-  .section {
-    @apply py-16 px-6 max-w-7xl mx-auto;
+  /* Cards */
+  .card-neo {
+    @apply bg-card border-3 border-main shadow-neo p-8 flex flex-col gap-4;
+  }
+
+  .card-neo-hover {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-neo-lg hover:bg-page;
+  }
+
+  /* Inputs */
+  .input-neo {
+    @apply w-full px-6 py-4 bg-card border-3 border-main text-lg font-bold text-main placeholder-gray-500 focus:outline-none focus:shadow-neo focus:bg-muted transition-all;
+  }
+
+  /* Structural */
+  .section-neo {
+    @apply py-24 px-6 max-w-7xl mx-auto;
+  }
+
+  .divider-neo {
+    @apply h-1 bg-main my-12 w-full;
+  }
+
+  /* Typography */
+  .heading-neo {
+    @apply font-black uppercase tracking-tight;
+  }
+
+  .text-shadow-neo {
+    text-shadow: 2px 2px 0px var(--shadow-color);
+  }
+
+  .bg-grid-pattern {
+    background-image: linear-gradient(var(--border-main) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-main) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
+    opacity: 0.1;
   }
 }
